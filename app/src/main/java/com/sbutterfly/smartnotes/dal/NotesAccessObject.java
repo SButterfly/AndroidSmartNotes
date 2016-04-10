@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-import com.sbutterfly.smartnotes.dal.entities.Note;
+import com.sbutterfly.smartnotes.dal.model.Note;
 
 import java.util.ArrayList;
 import java.util.List;

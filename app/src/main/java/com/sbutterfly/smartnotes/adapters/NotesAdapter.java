@@ -8,11 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sbutterfly.smartnotes.R;
-import com.sbutterfly.smartnotes.dal.entities.Note;
+import com.sbutterfly.smartnotes.adapters.base.RecyclerViewAdapter;
+import com.sbutterfly.smartnotes.dal.model.Note;
 
 import java.util.List;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
+public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHolder> {
 
     private List<Note> notes;
 
@@ -27,6 +28,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             titleTextView = (TextView) v.findViewById(R.id.title);
             bodyTextView = (TextView) v.findViewById(R.id.body);
             importanceImageView = (ImageView) v.findViewById(R.id.importance);
+        }
+
+        public void populateView(Note note) {
+            titleTextView.setText(note.getTitle());
+            bodyTextView.setText(note.getBody());
+            // TODO set importance icon
         }
     }
 
@@ -43,11 +50,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         Note note = notes.get(position);
-        holder.titleTextView.setText(note.getTitle());
-        holder.bodyTextView.setText(note.getBody());
-        // TODO set importance icon
+        holder.populateView(note);
     }
 
     @Override

@@ -1,8 +1,13 @@
-package com.sbutterfly.smartnotes.dal.entities;
+package com.sbutterfly.smartnotes.dal.model;
 
-public class Note {
+import android.os.Bundle;
 
-    private int id;
+public class Note extends BaseModel {
+
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_BODY = "body";
+    private static final String KEY_IMPORTANCE = "importance";
+
     private String title;
     private String body;
     private int importance;
@@ -14,19 +19,15 @@ public class Note {
         public final static int HIGH = 3;
     }
 
+    public Note() {
+        importance = Importance.NONE;
+    }
+
     public Note(int id, String title, String body, int importance) {
-        this.id = id;
+        super(id);
         this.title = title;
         this.body = body;
         this.importance = importance;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -51,5 +52,21 @@ public class Note {
 
     public void setImportance(int importance) {
         this.importance = importance;
+    }
+
+    @Override
+    public void save(Bundle bundle) {
+        super.save(bundle);
+        bundle.putString(KEY_TITLE, title);
+        bundle.putString(KEY_BODY, body);
+        bundle.putInt(KEY_IMPORTANCE, importance);
+    }
+
+    @Override
+    public void populate(Bundle bundle) {
+        super.populate(bundle);
+        title = bundle.getString(KEY_TITLE);
+        body = bundle.getString(KEY_BODY);
+        importance = bundle.getInt(KEY_IMPORTANCE);
     }
 }
