@@ -69,4 +69,14 @@ public class Note extends BaseModel {
         body = bundle.getString(KEY_BODY);
         importance = bundle.getInt(KEY_IMPORTANCE);
     }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id='" + getId() + '\'' +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", importance=" + importance +
+                '}';
+    }
 }

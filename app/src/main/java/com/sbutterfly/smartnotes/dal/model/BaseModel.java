@@ -6,7 +6,7 @@ public class BaseModel {
 
     private static final String ID_KEY = "id";
 
-    private int id;
+    private int id = -1;
 
     public BaseModel() { }
 
