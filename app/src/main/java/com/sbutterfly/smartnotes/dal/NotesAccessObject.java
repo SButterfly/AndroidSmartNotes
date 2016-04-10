@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.sbutterfly.smartnotes.dal.model.Note;
 
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotesAccessObject {
+
+    private static final String TAG = "NotesAccessObject";
 
     public static abstract class NoteContract implements BaseColumns {
         public static final String TABLE_NAME = "notes";
@@ -49,6 +52,8 @@ public class NotesAccessObject {
         long id = db.insertOrThrow(NoteContract.TABLE_NAME, null, values);
         db.close();
         note.setId((int)id);
+
+        Log.d(TAG, "Added or inserted note: " + note);
     }
 
     public Note getNote(int id) {
@@ -63,6 +68,7 @@ public class NotesAccessObject {
         if (cursor != null) {
             cursor.moveToFirst();
             Note note = parseNote(cursor);
+            Log.d(TAG, "Got note: " + note);
             return note;
         }
         throw new IllegalArgumentException("Can't find note with id: " + id);
@@ -83,6 +89,8 @@ public class NotesAccessObject {
         }
 
         cursor.close();
+
+        Log.d(TAG, "Got notes: " + notes);
         return notes;
     }
 
@@ -96,12 +104,14 @@ public class NotesAccessObject {
 
     public void deleteNote(Note note) {
         deleteNote(note.getId());
+        Log.d(TAG, "Deleted note: " + note);
     }
 
-    private void deleteNote(int id) {
+    public void deleteNote(int id) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         db.delete(NoteContract.TABLE_NAME, NoteContract._ID + " = ?",
                 new String[] { String.valueOf(id) });
         db.close();
+        Log.d(TAG, "Deleted note id: " + id);
     }
 }
