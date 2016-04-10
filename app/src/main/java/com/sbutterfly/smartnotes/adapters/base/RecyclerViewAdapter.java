@@ -31,9 +31,6 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
 
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
 
-    public void swapPositions(int from, int to) {
-    }
-
     @Override
     public void onBindViewHolder(H viewHolder, int position) {
         viewHolder.itemView.setActivated(selectedItems.get(position, false));
@@ -46,13 +43,11 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
             selectedItems.put(pos, true);
         }
         notifyItemChanged(pos);
-
     }
 
     public void setSelected(int pos) {
         selectedItems.put(pos, true);
         notifyItemChanged(pos);
-
     }
 
     public void clearSelection(int pos) {
@@ -81,4 +76,13 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
         return items;
     }
 
+    public abstract T getItem(int position);
+
+    public List<T> getSelectedItems() {
+        List<T> items = new ArrayList<>(selectedItems.size());
+        for (int i = 0; i < selectedItems.size(); i++) {
+            items.add(getItem(selectedItems.keyAt(i)));
+        }
+        return items;
+    }
 }
