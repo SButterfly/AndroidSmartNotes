@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp">
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note with very long title. Why people writes so long titles?"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@android:color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@+id/importance"/>
+
+        <TextView
+            android:id="@+id/body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The body of note can be very, very long to test ellpsizing. Does it work?"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_below="@+id/title"
+            android:layout_alignParentLeft="true"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:id="@+id/importance"
+            android:src="@drawable/abc_ic_star_black_16dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+</FrameLayout>
