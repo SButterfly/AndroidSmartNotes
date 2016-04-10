@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.EditNoteActivity"
-    android:padding="16dp">
-
-    <TextView
+    tools:context=".activities.EditNoteActivity">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:textSize="16sp"
-        android:text="Title"
-        android:fontFamily="sans-serif"
-        android:textColor="@android:color/black" />
-
-    <TextView
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Body"
-        android:id="@+id/body"
-        android:textSize="14sp"
-        android:fontFamily="sans-serif"
-        android:layout_marginTop="16dp"/>
+        android:orientation="vertical"
+        android:padding="16dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:textSize="16sp"
+            android:text="Title"
+            android:fontFamily="sans-serif"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Body"
+            android:id="@+id/body"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
 </LinearLayout>
