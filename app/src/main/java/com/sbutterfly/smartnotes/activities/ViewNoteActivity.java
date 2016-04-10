@@ -13,12 +13,14 @@ import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.dal.DatabaseHandler;
 import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
+import com.sbutterfly.smartnotes.receivers.NotesChangedBroadcastReceiver;
 
-public class ViewNoteActivity extends AppCompatActivity {
+public class ViewNoteActivity extends AppCompatActivity implements NotesChangedBroadcastReceiver.OnNoteChangedListener {
 
     private Note note = new Note();
     private TextView title;
     private TextView body;
+    private NotesChangedBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,17 @@ public class ViewNoteActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.title);
         body = (TextView) findViewById(R.id.body);
 
-        title.setText(note.getTitle());
-        body.setText(note.getBody());
+        noteUpdated(note);
+
+        receiver = new NotesChangedBroadcastReceiver();
+        receiver.setOnNoteChangedListener(this);
+        registerReceiver(receiver, receiver.getIntentFilter());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
     @Override
@@ -56,11 +67,30 @@ public class ViewNoteActivity extends AppCompatActivity {
             case R.id.action_delete:
                 // TODO add 'Are you sure to delete?' alert
                 DatabaseHandler databaseHandler = new DatabaseHandler(this);
-                NotesAccessObject notesAccessObject = new NotesAccessObject(databaseHandler);
+                NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
                 notesAccessObject.deleteNote(note);
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void noteUpdated(Note note) {
+        if (note.getId() == this.note.getId()) {
+            this.note = note;
+            title.setText(note.getTitle());
+            body.setText(note.getBody());
+        }
+    }
+
+    @Override
+    public void noteAdded(Note note) {
+        // skip
+    }
+
+    @Override
+    public void noteDeleted(Note note) {
+        // skip
     }
 }

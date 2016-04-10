@@ -15,7 +15,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(NotesAccessObject.NoteContract.SQL_CREATE_ENTRIES);
+        db.execSQL(NotesAccessObject.DBContract.SQL_CREATE_ENTRIES);
     }
 
     @Override

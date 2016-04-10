@@ -50,17 +50,22 @@ public class EditNoteActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
-        NotesAccessObject notesAccessObject = new NotesAccessObject(databaseHandler);
+        NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
         switch (item.getItemId()) {
             case R.id.action_save:
                 note.setTitle(title.getText().toString());
                 note.setBody(body.getText().toString());
-                notesAccessObject.addOrUpdateNote(note);
+                if (note.getId() != -1) {
+                    notesAccessObject.updateNote(note);
+                } else {
+                    notesAccessObject.addNote(note);
+                }
                 finish();
                 return true;
             case R.id.action_delete:
                 // TODO add 'Are you sure to delete?' alert
                 notesAccessObject.deleteNote(note);
+                // TODO you should navigate to first activity
                 finish();
                 return true;
             case android.R.id.home:

@@ -1,6 +1,8 @@
 package com.sbutterfly.smartnotes.dal;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
@@ -15,7 +17,7 @@ public class NotesAccessObject {
 
     private static final String TAG = "NotesAccessObject";
 
-    public static abstract class NoteContract implements BaseColumns {
+    public static abstract class DBContract implements BaseColumns {
         public static final String TABLE_NAME = "notes";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_BODY = "body";
@@ -36,32 +38,71 @@ public class NotesAccessObject {
                         ");";
     }
 
+    public static abstract class BroadcastContract {
+
+        public static final String ACTION = "Notes_db_updated";
+
+        public static final String TYPE_KEY = "Note_db_update_key";
+        public static final String TYPE_ADDED = "Note_added";
+        public static final String TYPE_DELETED = "Note_deleted";
+        public static final String TYPE_UPDATED = "Note_updated";
+
+        public static final String NOTE_KEY = "NOTE_KEY";
+    }
+
+    private final Context context;
     private final DatabaseHandler databaseHandler;
 
-    public NotesAccessObject(DatabaseHandler databaseHandler) {
+    public NotesAccessObject(Context context, DatabaseHandler databaseHandler) {
+        this.context = context;
         this.databaseHandler = databaseHandler;
     }
 
-    public void addOrUpdateNote(Note note) {
+    public void addNote(Note note) {
         ContentValues values = new ContentValues();
-        values.put(NoteContract.COLUMN_NAME_TITLE, note.getTitle());
-        values.put(NoteContract.COLUMN_NAME_BODY, note.getBody());
-        values.put(NoteContract.COLUMN_NAME_IMPORTANCE, note.getImportance());
+        values.put(DBContract.COLUMN_NAME_TITLE, note.getTitle());
+        values.put(DBContract.COLUMN_NAME_BODY, note.getBody());
+        values.put(DBContract.COLUMN_NAME_IMPORTANCE, note.getImportance());
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        long id = db.insertOrThrow(NoteContract.TABLE_NAME, null, values);
+        long id = db.insertOrThrow(DBContract.TABLE_NAME, null, values);
         db.close();
         note.setId((int)id);
 
-        Log.d(TAG, "Added or inserted note: " + note);
+        Log.d(TAG, "Added note: " + note);
+        Intent intent = new Intent(BroadcastContract.ACTION)
+                .putExtra(BroadcastContract.TYPE_KEY, BroadcastContract.TYPE_ADDED)
+                .putExtra(BroadcastContract.NOTE_KEY, note.toBundle());
+
+        context.sendBroadcast(intent);
+    }
+
+    public void updateNote(Note note) {
+        ContentValues values = new ContentValues();
+        values.put(DBContract.COLUMN_NAME_TITLE, note.getTitle());
+        values.put(DBContract.COLUMN_NAME_BODY, note.getBody());
+        values.put(DBContract.COLUMN_NAME_IMPORTANCE, note.getImportance());
+
+        SQLiteDatabase db = databaseHandler.getWritableDatabase();
+        long id = db.update(DBContract.TABLE_NAME, values, DBContract._ID + "=?",
+                new String[] { String.valueOf(note.getId())});
+
+        db.close();
+
+        Log.d(TAG, "Updated note: " + note);
+        Intent intent = new Intent(BroadcastContract.ACTION)
+                .putExtra(BroadcastContract.TYPE_KEY, BroadcastContract.TYPE_UPDATED)
+                .putExtra(BroadcastContract.NOTE_KEY, note.toBundle());
+
+        context.sendBroadcast(intent);
     }
 
     public Note getNote(int id) {
         SQLiteDatabase db = databaseHandler.getReadableDatabase();
 
-        Cursor cursor = db.query(NoteContract.TABLE_NAME,
-                new String[] { NoteContract._ID, NoteContract.COLUMN_NAME_TITLE, NoteContract.COLUMN_NAME_BODY, NoteContract.COLUMN_NAME_IMPORTANCE, NoteContract.COLUMN_NAME_TIMESTAMP },
-                NoteContract._ID + "=?",
+        Cursor cursor = db.query(DBContract.TABLE_NAME,
+                new String[] { DBContract._ID, DBContract.COLUMN_NAME_TITLE, DBContract.COLUMN_NAME_BODY, DBContract.COLUMN_NAME_IMPORTANCE, DBContract.COLUMN_NAME_TIMESTAMP },
+                DBContract._ID + "=?",
                 new String[] { String.valueOf(id) },
                 null, null, null, null);
 
@@ -76,7 +117,7 @@ public class NotesAccessObject {
 
     public List<Note> getNotes() {
         List<Note> notes = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + NoteContract.TABLE_NAME;
+        String selectQuery = "SELECT  * FROM " + DBContract.TABLE_NAME;
 
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -103,15 +144,17 @@ public class NotesAccessObject {
     }
 
     public void deleteNote(Note note) {
-        deleteNote(note.getId());
-        Log.d(TAG, "Deleted note: " + note);
-    }
-
-    public void deleteNote(int id) {
         SQLiteDatabase db = databaseHandler.getWritableDatabase();
-        db.delete(NoteContract.TABLE_NAME, NoteContract._ID + " = ?",
-                new String[] { String.valueOf(id) });
+        db.delete(DBContract.TABLE_NAME, DBContract._ID + " = ?",
+                new String[] { String.valueOf(note.getId()) });
         db.close();
-        Log.d(TAG, "Deleted note id: " + id);
+
+        Log.d(TAG, "Deleted note: " + note);
+
+        Intent intent = new Intent(BroadcastContract.ACTION)
+                .putExtra(BroadcastContract.TYPE_KEY, BroadcastContract.TYPE_DELETED)
+                .putExtra(BroadcastContract.NOTE_KEY, note.toBundle());
+
+        context.sendBroadcast(intent);
     }
 }

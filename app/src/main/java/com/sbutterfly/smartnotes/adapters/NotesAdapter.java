@@ -12,6 +12,8 @@ import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.adapters.base.RecyclerViewAdapter;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHolder> {
@@ -47,8 +49,8 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHol
         }
     }
 
-    public NotesAdapter(List<Note> notes) {
-        this.notes = notes;
+    public NotesAdapter(Collection<Note> notes) {
+        this.notes = new ArrayList<>(notes);
     }
 
     @Override
@@ -74,6 +76,24 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHol
     @Override
     public int getItemCount() {
         return notes.size();
+    }
+
+    public void setItem(Note note, int position) {
+        notes.set(position, note);
+        notifyItemChanged(position);
+    }
+
+    public void insertItem(Note note) {
+        List<Note> newNodes = new ArrayList<>(notes.size() + 1);
+        newNodes.add(note);
+        newNodes.addAll(notes);
+        notes = newNodes;
+        notifyItemInserted(0);
+    }
+
+    public void deleteItem(int position) {
+        notes.remove(position);
+        notifyItemRemoved(position);
     }
 
     public void setSelectionMode(boolean value) {
