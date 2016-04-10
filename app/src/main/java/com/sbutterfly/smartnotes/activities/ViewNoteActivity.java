@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.sbutterfly.smartnotes.R;
+import com.sbutterfly.smartnotes.dal.DatabaseHandler;
+import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
 public class ViewNoteActivity extends AppCompatActivity {
@@ -52,8 +54,11 @@ public class ViewNoteActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_delete:
-                // TODO add handler
-                return false;
+                // TODO add 'Are you sure to delete?' alert
+                DatabaseHandler databaseHandler = new DatabaseHandler(this);
+                NotesAccessObject notesAccessObject = new NotesAccessObject(databaseHandler);
+                notesAccessObject.deleteNote(note);
+                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
