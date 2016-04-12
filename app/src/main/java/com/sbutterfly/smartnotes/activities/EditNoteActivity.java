@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.sbutterfly.smartnotes.R;
@@ -37,7 +38,18 @@ public class EditNoteActivity extends AppCompatActivity {
         body = (EditText) findViewById(R.id.body);
 
         title.setText(note.getTitle());
+        title.setSelection(title.length());
         body.setText(note.getBody());
+
+        // Show key board
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        title = null;
+        body = null;
     }
 
     @Override
