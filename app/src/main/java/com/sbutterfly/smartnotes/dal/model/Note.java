@@ -4,12 +4,12 @@ import android.os.Bundle;
 
 public class Note extends BaseModel {
 
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_BODY = "body";
-    private static final String KEY_IMPORTANCE = "importance";
+    private final static String KEY_TITLE = "title";
+    private final static String KEY_BODY = "body";
+    private final static String KEY_IMPORTANCE = "importance";
 
-    private String title;
-    private String body;
+    private String title = "";
+    private String body = "";
     private int importance;
 
     public static abstract class Importance {

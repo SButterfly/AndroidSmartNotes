@@ -1,8 +1,11 @@
 package com.sbutterfly.smartnotes.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -60,32 +63,88 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        DatabaseHandler databaseHandler = new DatabaseHandler(this);
-        NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
         switch (item.getItemId()) {
             case R.id.action_save:
-                note.setTitle(title.getText().toString());
-                note.setBody(body.getText().toString());
-                if (note.getId() != -1) {
-                    notesAccessObject.updateNote(note);
-                } else {
-                    notesAccessObject.addNote(note);
-                }
-                finish();
+                saveItem();
                 return true;
             case R.id.action_delete:
-                // TODO add 'Are you sure to delete?' alert
-                notesAccessObject.deleteNote(note);
-                // TODO you should navigate to first activity
-                finish();
+                deleteItem();
                 return true;
             case android.R.id.home:
-                // TODO add 'Are you sure to exit?' alert
-                finish();
+                exit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void saveItem() {
+        DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+        note.setTitle(title.getText().toString());
+        note.setBody(body.getText().toString());
+        if (note.getId() != Note.INVALID_ID) {
+            notesAccessObject.updateNote(note);
+        } else {
+            notesAccessObject.addNote(note);
+        }
+        finish();
+    }
+
+    private void deleteItem() {
+        final DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        final NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+        DialogInterface.OnClickListener deleteAlertDialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    if (note.getId() != Note.INVALID_ID) {
+                        notesAccessObject.deleteNote(note);
+                    }
+                    // TODO you should navigate to first activity
+                    finish();
+                }
+            }
+        };
+        AlertDialog deleteAlertDialog = new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.deleteSingleNoteTitle))
+                .setPositiveButton(getString(R.string.yes), deleteAlertDialogClickListener)
+                .setNegativeButton(getString(R.string.no), deleteAlertDialogClickListener)
+                .show();
+    }
+
+    private void exit() {
+        String newTitle = title.getText().toString();
+        String newBody = body.getText().toString();
+
+        if (!newTitle.equals(note.getTitle()) || !newBody.equals(note.getBody())) {
+
+            DialogInterface.OnClickListener alertDialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                }
+            };
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setMessage(getString(R.string.exitAlertDialogMessage))
+                    .setPositiveButton(getString(R.string.yes), alertDialogClickListener)
+                    .setNegativeButton(getString(R.string.no), alertDialogClickListener)
+                    .show();
+        } else {
+            finish();
         }
     }
 }

@@ -6,4 +6,8 @@
     <string name="action_change">Change</string>
     <string name="action_delete">Delete</string>
     <string name="action_save">Save</string>
+    <string name="deleteSingleNoteTitle">Are you sure want to delete note?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="exitAlertDialogMessage">You have unsaved changes. Continue?</string>
 </resources>

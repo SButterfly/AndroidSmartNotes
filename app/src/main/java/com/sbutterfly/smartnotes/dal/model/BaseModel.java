@@ -4,9 +4,11 @@ import android.os.Bundle;
 
 public class BaseModel {
 
+    public final static int INVALID_ID = -1;
+
     private static final String ID_KEY = "id";
 
-    private int id = -1;
+    private int id = INVALID_ID;
 
     public BaseModel() { }
 
