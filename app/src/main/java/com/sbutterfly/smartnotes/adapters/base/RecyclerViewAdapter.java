@@ -16,9 +16,9 @@
 package com.sbutterfly.smartnotes.adapters.base;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,60 +29,110 @@ import java.util.List;
  */
 public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<H> {
 
-    private SparseBooleanArray selectedItems = new SparseBooleanArray();
+    // First param is item, second is selected
+    private ArrayList<Tuple<T, Boolean>> items;
+    private int selectedCount = 0;
+
+    public RecyclerViewAdapter(Collection<T> items) {
+        this.items = new ArrayList<>(items.size());
+        for (T item: items) {
+            this.items.add(new Tuple<>(item, false));
+        }
+    }
 
     @Override
     public void onBindViewHolder(H viewHolder, int position) {
-        viewHolder.itemView.setActivated(selectedItems.get(position, false));
+        viewHolder.itemView.setActivated(items.get(position).y);
     }
 
-    public void toggleSelection(int pos) {
-        if (selectedItems.get(pos, false)) {
-            selectedItems.delete(pos);
-        } else {
-            selectedItems.put(pos, true);
+    public T getItem(int position) {
+        return items.get(position).x;
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    public void deleteItem(int position) {
+        selectedCount += items.get(position).y ? -1 : 0;
+        items.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void setItem(int position, T note) {
+        items.set(position, new Tuple<>(note, items.get(position).y));
+        notifyItemChanged(position);
+    }
+
+    public void insertItem(int position, T item) {
+        items.add(position, new Tuple<>(item, false));
+        notifyItemInserted(position);
+    }
+
+    public void toggleSelection(int position) {
+        // change to opposite
+        items.get(position).y ^= true;
+        selectedCount += items.get(position).y ? 1 : -1;
+        notifyItemChanged(position);
+    }
+
+    public void setSelected(int position) {
+        if (!items.get(position).y) {
+            items.get(position).y = true;
+            selectedCount++;
+            notifyItemChanged(position);
         }
-        notifyItemChanged(pos);
     }
 
-    public void setSelected(int pos) {
-        selectedItems.put(pos, true);
-        notifyItemChanged(pos);
-    }
-
-    public void clearSelection(int pos) {
-        if (selectedItems.get(pos, false)) {
-            selectedItems.delete(pos);
+    public void clearSelection(int position) {
+        if (items.get(position).y) {
+            items.get(position).y = false;
+            selectedCount--;
+            notifyItemChanged(position);
         }
-        notifyItemChanged(pos);
     }
 
     public void clearSelections() {
-        if (selectedItems.size() > 0) {
-            selectedItems.clear();
+        if (selectedCount > 0) {
+            for (Tuple<T, Boolean> tuple : this.items) {
+                tuple.y = false;
+            }
+            selectedCount = 0;
             notifyDataSetChanged();
         }
     }
 
-    public int getSelectedItemCount() {
-        return selectedItems.size();
+    public int getSelectedItemsCount() {
+        return selectedCount;
     }
 
     public List<Integer> getSelectedItemsPositions() {
-        List<Integer> items = new ArrayList<Integer>(selectedItems.size());
-        for (int i = 0; i < selectedItems.size(); i++) {
-            items.add(selectedItems.keyAt(i));
+        List<Integer> indexes = new ArrayList<>(selectedCount);
+        for (int i = 0; i < this.items.size(); i++) {
+            if (items.get(i).y) {
+                indexes.add(i);
+            }
         }
-        return items;
+        return indexes;
     }
 
-    public abstract T getItem(int position);
-
     public List<T> getSelectedItems() {
-        List<T> items = new ArrayList<>(selectedItems.size());
-        for (int i = 0; i < selectedItems.size(); i++) {
-            items.add(getItem(selectedItems.keyAt(i)));
+        List<T> result = new ArrayList<>(selectedCount);
+        for (int i = 0; i < this.items.size(); i++) {
+            if (items.get(i).y) {
+                result.add(items.get(i).x);
+            }
         }
-        return items;
+        return result;
+    }
+
+    private class Tuple<X, Y> {
+        public X x;
+        public Y y;
+        public Tuple(X x, Y y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

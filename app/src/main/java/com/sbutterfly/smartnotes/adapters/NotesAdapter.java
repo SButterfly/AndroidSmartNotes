@@ -12,13 +12,10 @@ import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.adapters.base.RecyclerViewAdapter;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHolder> {
 
-    private List<Note> notes;
     private boolean selectionMode;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,7 +47,7 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHol
     }
 
     public NotesAdapter(Collection<Note> notes) {
-        this.notes = new ArrayList<>(notes);
+        super(notes);
     }
 
     @Override
@@ -63,41 +60,17 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesAdapter.ViewHol
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Note note = notes.get(position);
+        Note note = getItem(position);
         holder.populateView(note);
         holder.setSelectionMode(selectionMode);
     }
 
-    @Override
-    public Note getItem(int position) {
-        return notes.get(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return notes.size();
-    }
-
-    public void setItem(Note note, int position) {
-        notes.set(position, note);
-        notifyItemChanged(position);
-    }
-
-    public void insertItem(Note note) {
-        List<Note> newNodes = new ArrayList<>(notes.size() + 1);
-        newNodes.add(note);
-        newNodes.addAll(notes);
-        notes = newNodes;
-        notifyItemInserted(0);
-    }
-
-    public void deleteItem(int position) {
-        notes.remove(position);
-        notifyItemRemoved(position);
-    }
-
     public void setSelectionMode(boolean value) {
         this.selectionMode = value;
-        clearSelections();
+        if (getSelectedItemsCount() != 0) {
+            clearSelections();
+        } else {
+            notifyDataSetChanged();
+        }
     }
 }

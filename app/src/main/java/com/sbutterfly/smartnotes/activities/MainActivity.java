@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.notes_recycle_view);
         recyclerView.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager  = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.addOnItemTouchListener(new ItemTouchListenerAdapter(recyclerView, this));
@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             intent.putExtras(noteBundle);
             startActivity(intent);
         } else {
-            NotesAdapter adapter = (NotesAdapter)parent.getAdapter();
+            NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
             adapter.toggleSelection(position);
-            changeMenuItem.setEnabled(adapter.getSelectedItemCount() == 1);
+            changeMenuItem.setEnabled(adapter.getSelectedItemsCount() == 1);
         }
     }
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             enterSelectionMode();
         }
 
-        NotesAdapter adapter = (NotesAdapter)parent.getAdapter();
+        NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
         adapter.setSelected(position);
     }
 
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     public void noteUpdated(Note note) {
         for (int i = 0; i < adapter.getItemCount(); i++) {
             if (adapter.getItem(i).getId() == note.getId()) {
-                adapter.setItem(note, i);
+                adapter.setItem(i, note);
                 break;
             }
         }
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
     @Override
     public void noteAdded(Note note) {
-        adapter.insertItem(note);
+        adapter.insertItem(0, note);
     }
 
     @Override
@@ -189,6 +189,10 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
                 adapter.deleteItem(i);
                 break;
             }
+        }
+
+        if (adapter.getItemCount() == 0 && selectionMode == SelectionMode.ABLE) {
+            exitSelectionMode();
         }
     }
 }
