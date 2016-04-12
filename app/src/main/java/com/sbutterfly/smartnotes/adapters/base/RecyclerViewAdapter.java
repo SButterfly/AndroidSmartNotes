@@ -25,7 +25,7 @@ import java.util.List;
  * Extension to standard RecyclerView.Adapter that also keep state of selected/activated items.
  *
  * @param <T> Type of the class in this adapter
- * @param <H> - ViewHolder type
+ * @param <H> ViewHolder type
  */
 public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<H> {
 

@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     private void enterSelectionMode() {
         selectionMode = SelectionMode.ABLE;
         fab.hide();
-        adapter.setSelectionMode(true);
+        adapter.setInSelectionMode(true);
         changeMenuItem.setVisible(true);
         deleteMenuItem.setVisible(true);
         changeMenuItem.setEnabled(true);
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     private void exitSelectionMode() {
         selectionMode = SelectionMode.DISABLE;
         fab.show();
-        adapter.setSelectionMode(false);
+        adapter.setInSelectionMode(false);
         changeMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
         changeMenuItem.setEnabled(true);
