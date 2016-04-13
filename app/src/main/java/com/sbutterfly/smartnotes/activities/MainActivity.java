@@ -1,8 +1,10 @@
 package com.sbutterfly.smartnotes.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -78,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+        receiver.setOnNoteChangedListener(null);
+        receiver = null;
     }
 
     @Override
@@ -148,14 +152,24 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
                 startActivity(intent);
                 return true;
             case R.id.action_delete:
-                // TODO add 'Are you sure to delete?' alert
-                DatabaseHandler databaseHandler = new DatabaseHandler(this);
-                NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
-
-                List<Note> selectedItems = adapter.getSelectedItems();
-                for (Note selectedNote : selectedItems) {
-                    notesAccessObject.deleteNote(selectedNote);
-                }
+                final DatabaseHandler databaseHandler = new DatabaseHandler(this);
+                final NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+                DialogInterface.OnClickListener deleteAlertDialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            List<Note> selectedItems = adapter.getSelectedItems();
+                            for (Note selectedNote : selectedItems) {
+                                notesAccessObject.deleteNote(selectedNote);
+                            }
+                        }
+                    }
+                };
+                AlertDialog deleteAlertDialog = new AlertDialog.Builder(this)
+                        .setMessage(getString(adapter.getSelectedItemsCount() == 1 ? R.string.deleteSingleNoteTitle : R.string.deleteMultiNoteTitle))
+                        .setPositiveButton(getString(R.string.yes), deleteAlertDialogClickListener)
+                        .setNegativeButton(getString(R.string.no), deleteAlertDialogClickListener)
+                        .show();
                 return true;
             case android.R.id.home:
                 if (selectionMode == SelectionMode.ABLE) {
