@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
         recyclerView.addOnItemTouchListener(new ItemTouchListenerAdapter(recyclerView, this));
 
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
             adapter.toggleSelection(position);
             changeMenuItem.setEnabled(adapter.getSelectedItemsCount() == 1);
+            if (adapter.getSelectedItemsCount() == 0) {
+                exitSelectionMode();
+            }
+            updateAppBarTitle();
         }
     }
 
@@ -108,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
         NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
         adapter.setSelected(position);
+        updateAppBarTitle();
     }
 
     private void enterSelectionMode() {
@@ -208,5 +213,11 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         if (adapter.getItemCount() == 0 && selectionMode == SelectionMode.ABLE) {
             exitSelectionMode();
         }
+    }
+
+    private void updateAppBarTitle() {
+        String title = selectionMode == SelectionMode.DISABLE ? getString(R.string.app_name) : String.valueOf(adapter.getSelectedItemsCount());
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(title);
     }
 }

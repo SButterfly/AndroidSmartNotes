@@ -13,4 +13,7 @@
     <string name="exitAlertDialogMessage">You have unsaved changes. Continue?</string>
     <string name="no_title">(no title)</string>
     <string name="no_body">(no body)</string>
+    <string name="view">View</string>
+    <string name="edit">Edit</string>
+    <string name="add">Add</string>
 </resources>

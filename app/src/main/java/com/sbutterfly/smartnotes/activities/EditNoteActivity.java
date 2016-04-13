@@ -3,6 +3,7 @@ package com.sbutterfly.smartnotes.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,8 @@ import com.sbutterfly.smartnotes.dal.model.Note;
 
 public class EditNoteActivity extends AppCompatActivity {
 
+    private final static String TITLE_KEY = "APPBAR_TITLE";
+
     private Note note;
     private EditText title;
     private EditText body;
@@ -31,17 +34,26 @@ public class EditNoteActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CharSequence actionBarTitle;
 
         note = new Note();
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 note.populate(bundle);
+                actionBarTitle = getString(R.string.edit);
+            } else {
+                actionBarTitle = getString(R.string.add);
             }
         } else {
             note.populate(savedInstanceState);
+            actionBarTitle = savedInstanceState.getCharSequence(TITLE_KEY);
         }
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(actionBarTitle);
 
         title = (EditText) findViewById(R.id.title);
         body = (EditText) findViewById(R.id.body);
@@ -58,6 +70,7 @@ public class EditNoteActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         note.save(outState);
+        outState.putCharSequence(TITLE_KEY, getSupportActionBar().getTitle());
     }
 
     @Override
