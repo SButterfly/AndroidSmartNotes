@@ -37,7 +37,6 @@
             android:fontFamily="sans-serif"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="16dp"
             android:layout_toLeftOf="@+id/importance" />
 
         <TextView
@@ -59,7 +58,9 @@
             android:id="@+id/importance"
             android:src="@drawable/abc_ic_star_black_16dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone"/> <!-- TODO enable importance feature  -->
 
     </RelativeLayout>
     <View
