@@ -38,9 +38,10 @@
             android:layout_height="match_parent"
             android:id="@+id/body"
             android:hint="@string/body"
-            android:inputType="text"
             android:gravity="top|start"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"/>
+            android:layout_marginLeft="16dp"
+            android:scrollbars="vertical"
+            android:inputType="textMultiLine"/>
     </LinearLayout>
 </LinearLayout>
