@@ -19,7 +19,7 @@ import com.sbutterfly.smartnotes.dal.model.Note;
 
 public class EditNoteActivity extends AppCompatActivity {
 
-    private Note note = new Note();
+    private Note note;
     private EditText title;
     private EditText body;
 
@@ -32,9 +32,14 @@ public class EditNoteActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            note.populate(bundle);
+        note = new Note();
+        if (savedInstanceState == null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                note.populate(bundle);
+            }
+        } else {
+            note.populate(savedInstanceState);
         }
 
         title = (EditText) findViewById(R.id.title);
@@ -46,6 +51,12 @@ public class EditNoteActivity extends AppCompatActivity {
 
         // Show key board
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        note.save(outState);
     }
 
     @Override
