@@ -24,11 +24,28 @@
         android:layout_marginRight="16dp"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/checkboxlayout">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note with very long title. Why people writes so long titles?"
+            android:hint="@string/no_title"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@+id/importance" />
+
         <TextView
             android:id="@+id/body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="The body of note can be very, very long to test ellpsizing. Does it work?"
+            android:hint="@string/no_body"
             android:fontFamily="sans-serif"
             android:textSize="14sp"
             android:ellipsize="end"
@@ -43,20 +60,6 @@
             android:src="@drawable/abc_ic_star_black_16dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"/>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Note with very long title. Why people writes so long titles?"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@+id/importance" />
 
     </RelativeLayout>
     <View
