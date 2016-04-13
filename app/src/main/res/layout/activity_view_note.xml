@@ -24,13 +24,15 @@
             android:id="@+id/title"
             android:textSize="16sp"
             android:text="Title"
+            android:hint="@string/no_title"
             android:fontFamily="sans-serif"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Body"
+            android:hint="@string/no_body"
             android:id="@+id/body"
             android:textSize="14sp"
             android:fontFamily="sans-serif"

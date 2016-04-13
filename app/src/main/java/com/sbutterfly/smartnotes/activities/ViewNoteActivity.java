@@ -1,7 +1,9 @@
 package com.sbutterfly.smartnotes.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,14 +15,12 @@ import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.dal.DatabaseHandler;
 import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
-import com.sbutterfly.smartnotes.receivers.NotesChangedBroadcastReceiver;
 
-public class ViewNoteActivity extends AppCompatActivity implements NotesChangedBroadcastReceiver.OnNoteChangedListener {
+public class ViewNoteActivity extends AppCompatActivity {
 
-    private Note note = new Note();
+    private Note note;
     private TextView title;
     private TextView body;
-    private NotesChangedBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,23 +30,29 @@ public class ViewNoteActivity extends AppCompatActivity implements NotesChangedB
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Bundle bundle = getIntent().getExtras();
-        note.populate(bundle);
+        note = new Note();
+        if (savedInstanceState != null) {
+            note.populate(savedInstanceState);
+        } else {
+            Bundle bundle = getIntent().getExtras();
+            note.populate(bundle);
+        }
 
         title = (TextView) findViewById(R.id.title);
         body = (TextView) findViewById(R.id.body);
 
-        noteUpdated(note);
+        DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
 
-        receiver = new NotesChangedBroadcastReceiver();
-        receiver.setOnNoteChangedListener(this);
-        registerReceiver(receiver, receiver.getIntentFilter());
+        note = notesAccessObject.getNote(note.getId());
+        title.setText(note.getTitle());
+        body.setText(note.getBody());
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(receiver);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        note.save(outState);
     }
 
     @Override
@@ -65,32 +71,24 @@ public class ViewNoteActivity extends AppCompatActivity implements NotesChangedB
                 startActivity(intent);
                 return true;
             case R.id.action_delete:
-                // TODO add 'Are you sure to delete?' alert
-                DatabaseHandler databaseHandler = new DatabaseHandler(this);
-                NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
-                notesAccessObject.deleteNote(note);
-                finish();
+                final DatabaseHandler databaseHandler = new DatabaseHandler(this);
+                final NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+                DialogInterface.OnClickListener deleteAlertDialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            notesAccessObject.deleteNote(note);
+                            finish();
+                        }
+                    }
+                };
+                AlertDialog deleteAlertDialog = new AlertDialog.Builder(this)
+                        .setMessage(getString(R.string.deleteSingleNoteTitle))
+                        .setPositiveButton(getString(R.string.yes), deleteAlertDialogClickListener)
+                        .setNegativeButton(getString(R.string.no), deleteAlertDialogClickListener)
+                        .show();
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void noteUpdated(Note note) {
-        if (note.getId() == this.note.getId()) {
-            this.note = note;
-            title.setText(note.getTitle());
-            body.setText(note.getBody());
-        }
-    }
-
-    @Override
-    public void noteAdded(Note note) {
-        // skip
-    }
-
-    @Override
-    public void noteDeleted(Note note) {
-        // skip
     }
 }

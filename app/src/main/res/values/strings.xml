@@ -10,4 +10,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="exitAlertDialogMessage">You have unsaved changes. Continue?</string>
+    <string name="no_title">(no title)</string>
+    <string name="no_body">(no body)</string>
 </resources>
