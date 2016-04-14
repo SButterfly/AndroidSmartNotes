@@ -30,7 +30,10 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         NotesChangedBroadcastReceiver.OnNoteChangedListener {
 
     private SelectionMode selectionMode = SelectionMode.DISABLE;
+
+    private RecyclerView.LayoutManager layoutManager;
     private NotesAdapter adapter;
+    private RecyclerView recyclerView;
 
     private MenuItem changeMenuItem;
     private MenuItem deleteMenuItem;
@@ -59,10 +62,10 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.notes_recycle_view);
+        recyclerView = (RecyclerView) findViewById(R.id.notes_recycle_view);
         recyclerView.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addOnItemTouchListener(new ItemTouchListenerAdapter(recyclerView, this));
 
@@ -203,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         for (int i = 0; i < adapter.getItemCount(); i++) {
             if (adapter.getItem(i).getId() == note.getId()) {
                 adapter.setItem(i, note);
+                layoutManager.scrollToPosition(i);
                 break;
             }
         }
@@ -211,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     @Override
     public void noteAdded(Note note) {
         adapter.insertItem(0, note);
+        layoutManager.scrollToPosition(0);
     }
 
     @Override
