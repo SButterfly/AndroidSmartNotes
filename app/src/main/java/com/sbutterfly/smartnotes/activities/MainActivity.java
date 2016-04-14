@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -97,9 +98,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
             adapter.toggleSelection(position);
             changeMenuItem.setEnabled(adapter.getSelectedItemsCount() == 1);
-            if (adapter.getSelectedItemsCount() == 0) {
-                exitSelectionMode();
-            }
+            deleteMenuItem.setEnabled(adapter.getSelectedItemsCount() != 0);
             updateAppBarTitle();
         }
     }
@@ -147,6 +146,18 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (selectionMode == SelectionMode.ABLE) {
+                exitSelectionMode();
+                updateAppBarTitle();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_change:
@@ -179,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             case android.R.id.home:
                 if (selectionMode == SelectionMode.ABLE) {
                     exitSelectionMode();
+                    updateAppBarTitle();
                     return true;
                 }
             default:
@@ -213,10 +225,11 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         if (adapter.getItemCount() == 0 && selectionMode == SelectionMode.ABLE) {
             exitSelectionMode();
         }
+        updateAppBarTitle();
     }
 
     private void updateAppBarTitle() {
-        String title = selectionMode == SelectionMode.DISABLE ? getString(R.string.app_name) : String.valueOf(adapter.getSelectedItemsCount());
+        String title = selectionMode == SelectionMode.DISABLE || adapter.getSelectedItemsCount() == 0 ? getString(R.string.app_name) : String.valueOf(adapter.getSelectedItemsCount());
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(title);
     }
