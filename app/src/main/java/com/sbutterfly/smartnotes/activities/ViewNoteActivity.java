@@ -44,6 +44,11 @@ public class ViewNoteActivity extends AppCompatActivity {
 
         title = (TextView) findViewById(R.id.title);
         body = (TextView) findViewById(R.id.body);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
