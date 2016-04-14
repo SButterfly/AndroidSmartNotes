@@ -18,8 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.EditNoteActivity" />
-        <activity android:name=".activities.ViewNoteActivity"
-            android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.ViewNoteActivity" />
     </application>
 
 </manifest>

@@ -91,6 +91,10 @@ public class ViewNoteActivity extends AppCompatActivity {
                         .setPositiveButton(getString(R.string.yes), deleteAlertDialogClickListener)
                         .setNegativeButton(getString(R.string.no), deleteAlertDialogClickListener)
                         .show();
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
