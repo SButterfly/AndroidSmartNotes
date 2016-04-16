@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             adapter.toggleSelection(position);
             setEnabledMenuItem(changeMenuItem, adapter.getSelectedItemsCount() == 1);
             setEnabledMenuItem(deleteMenuItem, adapter.getSelectedItemsCount() != 0);
+
             updateAppBarTitle();
         }
     }
@@ -238,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
         String title;
 
-        if (selectionMode == SelectionMode.DISABLE || adapter.getSelectedItemsCount() == 0) {
+        if (selectionMode == SelectionMode.DISABLE) {
             title = getString(R.string.app_name);
         } else {
             String format = getString(R.string.selectedItemsCountFormat);
