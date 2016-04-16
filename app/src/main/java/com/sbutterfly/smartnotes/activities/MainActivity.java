@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
         adapter.setImportanceChangedListener(this);
         adapter.setRecyclerViewOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
+        // HACK to disable change animation
+        recyclerView.getItemAnimator().setChangeDuration(0);
 
         receiver = new NotesChangedBroadcastReceiver();
         receiver.setOnNoteChangedListener(this);
