@@ -114,6 +114,27 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private void saveItem() {
+        String newTitle = title.getText().toString();
+        String newBody = body.getText().toString();
+
+        if (newTitle.isEmpty() || newBody.isEmpty()) {
+            DialogInterface.OnClickListener emptySavewAlertDialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        saveItemImp();
+                    }
+                }
+            };
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setMessage(getString(R.string.emptySave))
+                    .setPositiveButton(getString(R.string.yes), emptySavewAlertDialogClickListener)
+                    .setNegativeButton(getString(R.string.no), emptySavewAlertDialogClickListener)
+                    .show();
+        }
+    }
+
+    private void saveItemImp() {
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
         note.setTitle(title.getText().toString());
@@ -154,7 +175,6 @@ public class EditNoteActivity extends AppCompatActivity {
         String newBody = body.getText().toString();
 
         if (!newTitle.equals(note.getTitle()) || !newBody.equals(note.getBody())) {
-
             DialogInterface.OnClickListener alertDialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
