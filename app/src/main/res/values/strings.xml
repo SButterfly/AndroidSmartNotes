@@ -16,4 +16,5 @@
     <string name="view">View</string>
     <string name="edit">Edit</string>
     <string name="add">Add</string>
+    <string name="selectedItemsCountFormat">%d selected</string>
 </resources>

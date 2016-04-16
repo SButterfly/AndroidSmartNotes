@@ -234,7 +234,15 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     }
 
     private void updateAppBarTitle() {
-        String title = selectionMode == SelectionMode.DISABLE || adapter.getSelectedItemsCount() == 0 ? getString(R.string.app_name) : String.valueOf(adapter.getSelectedItemsCount());
+
+        String title;
+
+        if (selectionMode == SelectionMode.DISABLE || adapter.getSelectedItemsCount() == 0) {
+            title = getString(R.string.app_name);
+        } else {
+            String format = getString(R.string.selectedItemsCountFormat);
+            title = String.format(format, adapter.getSelectedItemsCount());
+        }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(title);
     }
