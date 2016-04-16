@@ -1,4 +1,4 @@
-package com.sbutterfly.smartnotes.adapters.interrfaces;
+package com.sbutterfly.smartnotes.adapters.interfaces;
 
 import android.view.View;
 

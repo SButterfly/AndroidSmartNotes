@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.adapters.base.RecyclerViewAdapter;
-import com.sbutterfly.smartnotes.adapters.interrfaces.RecyclerViewOnItemClickListener;
+import com.sbutterfly.smartnotes.adapters.interfaces.RecyclerViewOnItemClickListener;
 import com.sbutterfly.smartnotes.adapters.viewHolders.NotesViewHolder;
 import com.sbutterfly.smartnotes.dal.model.Note;
 

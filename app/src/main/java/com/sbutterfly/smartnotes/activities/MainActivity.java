@@ -19,7 +19,7 @@ import android.view.View;
 
 import com.sbutterfly.smartnotes.R;
 import com.sbutterfly.smartnotes.adapters.NotesAdapter;
-import com.sbutterfly.smartnotes.adapters.interrfaces.RecyclerViewOnItemClickListener;
+import com.sbutterfly.smartnotes.adapters.interfaces.RecyclerViewOnItemClickListener;
 import com.sbutterfly.smartnotes.dal.DatabaseHandler;
 import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
 
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
-        List<Note> notes = notesAccessObject.getNotes();
+        List<Note> notes = notesAccessObject.getSortedNotes();
 
         adapter = new NotesAdapter(notes);
         adapter.setImportanceChangedListener(this);

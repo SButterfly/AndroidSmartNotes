@@ -97,6 +97,14 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
         return items.size();
     }
 
+    public List<T> getSourceItems() {
+        List<T> result = new ArrayList<>(selectedCount);
+        for (int i = 0; i < this.items.size(); i++) {
+            result.add(items.get(i).x);
+        }
+        return result;
+    }
+
     public void deleteItem(int position) {
         selectedCount += items.get(position).y ? -1 : 0;
         items.remove(position);

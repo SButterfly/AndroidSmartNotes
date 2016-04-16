@@ -11,6 +11,8 @@ import android.util.Log;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NotesAccessObject {
@@ -113,6 +115,19 @@ public class NotesAccessObject {
             return note;
         }
         throw new IllegalArgumentException("Can't find note with id: " + id);
+    }
+
+    public List<Note> getSortedNotes() {
+        List<Note> notes = getNotes();
+        // TODO change comparator to timestamp
+        Collections.sort(notes, new Comparator<Note>() {
+            @Override
+            public int compare(Note lhs, Note rhs) {
+                return rhs.getId() - lhs.getId();
+            }
+        });
+
+        return notes;
     }
 
     public List<Note> getNotes() {
