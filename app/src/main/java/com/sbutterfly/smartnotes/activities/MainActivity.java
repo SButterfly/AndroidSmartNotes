@@ -2,6 +2,7 @@ package com.sbutterfly.smartnotes.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         } else {
             NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
             adapter.toggleSelection(position);
-            changeMenuItem.setEnabled(adapter.getSelectedItemsCount() == 1);
-            deleteMenuItem.setEnabled(adapter.getSelectedItemsCount() != 0);
+            setEnabledMenuItem(changeMenuItem, adapter.getSelectedItemsCount() == 1);
+            setEnabledMenuItem(deleteMenuItem, adapter.getSelectedItemsCount() != 0);
             updateAppBarTitle();
         }
     }
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         adapter.setInSelectionMode(true);
         changeMenuItem.setVisible(true);
         deleteMenuItem.setVisible(true);
-        changeMenuItem.setEnabled(true);
+        setEnabledMenuItem(changeMenuItem, true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         adapter.setInSelectionMode(false);
         changeMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
-        changeMenuItem.setEnabled(true);
+        setEnabledMenuItem(changeMenuItem, true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
@@ -245,5 +246,13 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(title);
+    }
+
+    private void setEnabledMenuItem(MenuItem menuItem, boolean enabled) {
+        menuItem.setEnabled(enabled);
+        Drawable icon = menuItem.getIcon();
+        if (icon != null) {
+            icon.setAlpha(enabled ? 255 : 64);
+        }
     }
 }

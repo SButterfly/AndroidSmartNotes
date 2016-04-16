@@ -3,18 +3,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp">
-    <FrameLayout
-        android:id="@+id/checkboxlayout"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="16dp"
-        android:layout_centerVertical="true">
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-    </FrameLayout>
 
     <RelativeLayout
         android:orientation="vertical"
@@ -22,8 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/checkboxlayout">
+        android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/title"
