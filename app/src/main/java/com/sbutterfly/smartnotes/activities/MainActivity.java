@@ -18,8 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.sbutterfly.smartnotes.R;
-import com.sbutterfly.smartnotes.adapters.ItemTouchListenerAdapter;
 import com.sbutterfly.smartnotes.adapters.NotesAdapter;
+import com.sbutterfly.smartnotes.adapters.interrfaces.RecyclerViewOnItemClickListener;
 import com.sbutterfly.smartnotes.dal.DatabaseHandler;
 import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
@@ -27,8 +27,8 @@ import com.sbutterfly.smartnotes.receivers.NotesChangedBroadcastReceiver;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ItemTouchListenerAdapter.RecyclerViewOnItemClickListener,
-        NotesChangedBroadcastReceiver.OnNoteChangedListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewOnItemClickListener,
+        NotesChangedBroadcastReceiver.OnNoteChangedListener, NotesAdapter.ImportanceChangedListener {
 
     private SelectionMode selectionMode = SelectionMode.DISABLE;
 
@@ -68,12 +68,14 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnItemTouchListener(new ItemTouchListenerAdapter(recyclerView, this));
 
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
         List<Note> notes = notesAccessObject.getNotes();
+
         adapter = new NotesAdapter(notes);
+        adapter.setImportanceChangedListener(this);
+        adapter.setRecyclerViewOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
         receiver = new NotesChangedBroadcastReceiver();
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     }
 
     @Override
-    public void onItemClick(RecyclerView parent, View clickedView, int position) {
+    public void onItemClick(View clickedView, int position) {
         if (selectionMode == SelectionMode.DISABLE) {
             Note note = adapter.getItem(position);
             Bundle noteBundle = note.toBundle();
@@ -99,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
             intent.putExtras(noteBundle);
             startActivity(intent);
         } else {
-            NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
             adapter.toggleSelection(position);
             setEnabledMenuItem(changeMenuItem, adapter.getSelectedItemsCount() == 1);
             setEnabledMenuItem(deleteMenuItem, adapter.getSelectedItemsCount() != 0);
@@ -109,12 +110,10 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     }
 
     @Override
-    public void onItemLongClick(RecyclerView parent, View clickedView, int position) {
+    public void onItemLongClick(View clickedView, int position) {
         if (selectionMode == SelectionMode.DISABLE) {
             enterSelectionMode();
         }
-
-        NotesAdapter adapter = (NotesAdapter) parent.getAdapter();
         adapter.setSelected(position);
         updateAppBarTitle();
     }
@@ -126,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         changeMenuItem.setVisible(true);
         deleteMenuItem.setVisible(true);
         setEnabledMenuItem(changeMenuItem, true);
+        setEnabledMenuItem(deleteMenuItem, true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
         adapter.setInSelectionMode(false);
         changeMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
-        setEnabledMenuItem(changeMenuItem, true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
@@ -204,8 +203,17 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
     }
 
     @Override
+    public void onImportanceChanged(int position) {
+        Note note = adapter.getItem(position);
+        note.setImportance(Note.Importance.next(note.getImportance()));
+        final DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        final NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+        notesAccessObject.updateNote(note);
+    }
+
+    @Override
     public void noteUpdated(Note note) {
-        for (int i = 0; i < adapter.getItemCount(); i++) {
+        for (int i = 0; i < adapter.getModelItemCount(); i++) {
             if (adapter.getItem(i).getId() == note.getId()) {
                 adapter.setItem(i, note);
                 layoutManager.scrollToPosition(i);
@@ -222,21 +230,20 @@ public class MainActivity extends AppCompatActivity implements ItemTouchListener
 
     @Override
     public void noteDeleted(Note note) {
-        for (int i = 0; i < adapter.getItemCount(); i++) {
+        for (int i = 0; i < adapter.getModelItemCount(); i++) {
             if (adapter.getItem(i).getId() == note.getId()) {
                 adapter.deleteItem(i);
                 break;
             }
         }
 
-        if (adapter.getItemCount() == 0 && selectionMode == SelectionMode.ABLE) {
+        if (adapter.getModelItemCount() == 0 && selectionMode == SelectionMode.ABLE) {
             exitSelectionMode();
         }
         updateAppBarTitle();
     }
 
     private void updateAppBarTitle() {
-
         String title;
 
         if (selectionMode == SelectionMode.DISABLE) {

@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sbutterfly.smartnotes.R;
@@ -17,11 +19,12 @@ import com.sbutterfly.smartnotes.dal.DatabaseHandler;
 import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
-public class ViewNoteActivity extends AppCompatActivity {
+public class ViewNoteActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Note note;
     private TextView title;
     private TextView body;
+    private ImageView importance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class ViewNoteActivity extends AppCompatActivity {
 
         title = (TextView) findViewById(R.id.title);
         body = (TextView) findViewById(R.id.body);
+
+        importance = (ImageView) findViewById(R.id.importance);
     }
 
     @Override
@@ -56,6 +61,14 @@ public class ViewNoteActivity extends AppCompatActivity {
         note = notesAccessObject.getNote(note.getId());
         title.setText(note.getTitle());
         body.setText(note.getBody());
+        setImportanceIcon(note, importance);
+        importance.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        importance.setOnClickListener(null);
     }
 
     @Override
@@ -103,5 +116,37 @@ public class ViewNoteActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        final DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        final NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+
+        note.setImportance(Note.Importance.next(note.getImportance()));
+        notesAccessObject.updateNote(note);
+        setImportanceIcon(note, importance);
+    }
+
+    public void setImportanceIcon(Note note, ImageView imageView) {
+        int imageResourceId;
+
+        switch (note.getImportance()) {
+            case Note.Importance.HIGH:
+                imageResourceId = R.drawable.ic_star_red;
+                break;
+            case Note.Importance.MIDDLE:
+                imageResourceId = R.drawable.ic_star_yellow;
+                break;
+            case Note.Importance.LOW:
+                imageResourceId = R.drawable.ic_star_green;
+                break;
+            case Note.Importance.NONE:
+            default:
+                imageResourceId = R.drawable.ic_star_none;
+                break;
+        }
+
+        imageView.setImageResource(imageResourceId);
     }
 }

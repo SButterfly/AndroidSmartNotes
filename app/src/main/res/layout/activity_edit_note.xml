@@ -27,9 +27,10 @@
             android:hint="@string/title"
             android:inputType="text"
             android:lines="1"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp">
-        </EditText>
+            android:layout_marginLeft="16dp"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -39,6 +40,8 @@
             android:layout_height="match_parent"
             android:id="@+id/body"
             android:hint="@string/body"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
             android:gravity="top|start"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"

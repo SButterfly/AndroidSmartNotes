@@ -17,6 +17,10 @@ public class Note extends BaseModel {
         public final static int LOW = 1;
         public final static int MIDDLE = 2;
         public final static int HIGH = 3;
+
+        public static int next(int currentImportance) {
+            return (currentImportance + 1)%4;
+        }
     }
 
     public Note() {

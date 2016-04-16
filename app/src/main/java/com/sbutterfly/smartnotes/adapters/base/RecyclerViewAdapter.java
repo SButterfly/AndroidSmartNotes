@@ -16,33 +16,71 @@
 package com.sbutterfly.smartnotes.adapters.base;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Extension to standard RecyclerView.Adapter that also keep state of selected/activated items.
+ * Extension to standard RecyclerView.Adapter that also keep state of selected/activated items and add footer view;
  *
  * @param <T> Type of the class in this adapter
  * @param <H> ViewHolder type
  */
-public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<H> {
+public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int FOOTER_TYPE = 776;
 
     // First param is item, second is selected
     private ArrayList<Tuple<T, Boolean>> items;
     private int selectedCount = 0;
 
-    public RecyclerViewAdapter(Collection<T> items) {
+    private final int footerId;
+
+    public RecyclerViewAdapter(Collection<T> items, int footerId) {
+        if (footerId < 0) {
+            throw new IllegalArgumentException("Footer must be not negative value");
+        }
+        this.footerId = footerId;
         this.items = new ArrayList<>(items.size());
         for (T item: items) {
             this.items.add(new Tuple<>(item, false));
         }
     }
 
-    @Override
-    public void onBindViewHolder(H viewHolder, int position) {
+    public void onBindModelViewHolder(H viewHolder, int position) {
         viewHolder.itemView.setActivated(items.get(position).y);
+    }
+
+    @Override
+    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (FOOTER_TYPE == viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(footerId, parent, false);
+            return new FooterViewHolder(view);
+        } else {
+            return onCreateModelViewHolder(parent, viewType);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position >= getModelItemCount()){
+            return FOOTER_TYPE;
+        }
+        return super.getItemViewType(position);
+    }
+
+    public abstract H onCreateModelViewHolder(ViewGroup parent, int viewType);
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (position < items.size()) {
+            onBindModelViewHolder((H) viewHolder, position);
+        }
     }
 
     public T getItem(int position) {
@@ -51,6 +89,11 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
+        return getModelItemCount()
+                + (hasFooter() ? 1 : 0);
+    }
+
+    public int getModelItemCount() {
         return items.size();
     }
 
@@ -127,12 +170,22 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
         return result;
     }
 
+    public boolean hasFooter() {
+        return footerId != 0;
+    }
+
     private class Tuple<X, Y> {
         public X x;
         public Y y;
         public Tuple(X x, Y y) {
             this.x = x;
             this.y = y;
+        }
+    }
+
+    private static class FooterViewHolder extends RecyclerView.ViewHolder {
+        public FooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }
