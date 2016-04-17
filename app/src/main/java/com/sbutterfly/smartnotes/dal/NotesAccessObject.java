@@ -11,6 +11,7 @@ import android.util.Log;
 import com.sbutterfly.smartnotes.dal.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -58,6 +59,12 @@ public class NotesAccessObject {
     public NotesAccessObject(Context context, DatabaseHandler databaseHandler) {
         this.context = context;
         this.databaseHandler = databaseHandler;
+    }
+
+    public void addNotes(Collection<Note> notes) {
+        for (Note note : notes) {
+            addNote(note);
+        }
     }
 
     public void addNote(Note note) {

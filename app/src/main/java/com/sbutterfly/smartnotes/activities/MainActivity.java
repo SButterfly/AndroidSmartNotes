@@ -2,6 +2,7 @@ package com.sbutterfly.smartnotes.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -28,6 +29,7 @@ import com.sbutterfly.smartnotes.dal.NotesAccessObject;
 import com.sbutterfly.smartnotes.dal.model.Note;
 import com.sbutterfly.smartnotes.receivers.NotesChangedBroadcastReceiver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewOnItemClickListener,
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        placeDefaultNotesToDataBaseIfNessary();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -275,6 +279,40 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
         Drawable icon = menuItem.getIcon();
         if (icon != null) {
             icon.setAlpha(enabled ? 255 : 64);
+        }
+    }
+
+    private void placeDefaultNotesToDataBaseIfNessary() {
+        final String PREFS_NAME = "NOTES_PREFERENCES";
+        final String FIRST_TIME_LAUNCH_KEY = "first_time_launch";
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        boolean firstTimeLaunch = settings.getBoolean(FIRST_TIME_LAUNCH_KEY, true);
+
+        if (firstTimeLaunch) {
+            ArrayList<Note> notes = new ArrayList<>();
+
+            notes.add(new Note("Hello", "Welcome to my app!", Note.Importance.NONE));
+            notes.add(new Note("Simple instructions:", "1. To view note tap on it", Note.Importance.NONE));
+            notes.add(new Note(null, "2. To edit note press it, than tap edit icon", Note.Importance.NONE));
+            notes.add(new Note(null, "3. To delete note press it, than tap delete icon", Note.Importance.NONE));
+            notes.add(new Note(null, "5. You could delete several items as well", Note.Importance.NONE));
+            notes.add(new Note("6. To change importance, click on star -->", null, Note.Importance.MIDDLE));
+            notes.add(new Note("Funny facts", "You didn't notice that 4 option is missed", Note.Importance.NONE));
+            notes.add(new Note(null, "You check it", Note.Importance.NONE));
+            notes.add(new Note(null, "You smile :)", Note.Importance.NONE));
+            notes.add(new Note(null, "You smile again C:", Note.Importance.NONE));
+            notes.add(new Note("Have a nice day!!", "Yo. Man, seriously. You deserved it.", Note.Importance.NONE));
+
+            DatabaseHandler databaseHandler = new DatabaseHandler(this);
+            NotesAccessObject notesAccessObject = new NotesAccessObject(this, databaseHandler);
+
+            for (int i = notes.size() - 1; i >= 0; i--) {
+                notesAccessObject.addNote(notes.get(i));
+            }
+
+            settings.edit()
+                    .putBoolean(FIRST_TIME_LAUNCH_KEY, false)
+                    .apply();
         }
     }
 }

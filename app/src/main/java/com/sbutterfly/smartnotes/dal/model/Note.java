@@ -27,6 +27,10 @@ public class Note extends BaseModel {
         importance = Importance.NONE;
     }
 
+    public Note(String title, String body, int importance) {
+        this(-1, title, body, importance);
+    }
+
     public Note(int id, String title, String body, int importance) {
         super(id);
         this.title = title;
