@@ -117,7 +117,7 @@ public class EditNoteActivity extends AppCompatActivity {
         String newTitle = title.getText().toString();
         String newBody = body.getText().toString();
 
-        if (newTitle.isEmpty() || newBody.isEmpty()) {
+        if (newTitle.isEmpty() && newBody.isEmpty()) {
             DialogInterface.OnClickListener emptySavewAlertDialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -131,6 +131,8 @@ public class EditNoteActivity extends AppCompatActivity {
                     .setPositiveButton(getString(R.string.yes), emptySavewAlertDialogClickListener)
                     .setNegativeButton(getString(R.string.no), emptySavewAlertDialogClickListener)
                     .show();
+        } else {
+            saveItemImp();
         }
     }
 
