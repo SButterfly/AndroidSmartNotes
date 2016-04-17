@@ -2,9 +2,12 @@ package com.sbutterfly.smartnotes.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -123,21 +126,30 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
     private void enterSelectionMode() {
         selectionMode = SelectionMode.ABLE;
         fab.hide();
-        adapter.setInSelectionMode(true);
         changeMenuItem.setVisible(true);
         deleteMenuItem.setVisible(true);
         setEnabledMenuItem(changeMenuItem, true);
         setEnabledMenuItem(deleteMenuItem, true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorSelectedPrimary)));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorSelectedPrimaryDark));
+        }
     }
 
     private void exitSelectionMode() {
         selectionMode = SelectionMode.DISABLE;
         fab.show();
-        adapter.setInSelectionMode(false);
         changeMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        adapter.clearSelections();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorPrimary)));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        }
     }
 
     @Override

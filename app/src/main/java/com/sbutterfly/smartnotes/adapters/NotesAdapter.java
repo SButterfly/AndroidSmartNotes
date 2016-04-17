@@ -19,7 +19,6 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesViewHolder> imp
         void onImportanceChanged(int position);
     }
 
-    private boolean inSelectionMode;
     private ImportanceChangedListener importanceChangedListener;
     private RecyclerViewOnItemClickListener recyclerViewOnItemClickListener;
 
@@ -38,16 +37,6 @@ public class NotesAdapter extends RecyclerViewAdapter<Note, NotesViewHolder> imp
         super.onBindModelViewHolder(holder, position);
         Note note = getItem(position);
         holder.populateView(note);
-        holder.setSelectionMode(inSelectionMode);
-    }
-
-    public void setInSelectionMode(boolean value) {
-        this.inSelectionMode = value;
-        if (getSelectedItemsCount() != 0) {
-            clearSelections();
-        } else {
-            notifyDataSetChanged();
-        }
     }
 
     public void setImportanceChangedListener(ImportanceChangedListener importanceChangedListener) {

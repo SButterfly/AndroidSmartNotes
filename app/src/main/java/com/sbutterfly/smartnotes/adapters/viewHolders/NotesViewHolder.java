@@ -1,6 +1,5 @@
 package com.sbutterfly.smartnotes.adapters.viewHolders;
 
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -53,14 +52,6 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
         }
 
         importanceImageView.setImageResource(imageResourceId);
-    }
-
-    public void setSelectionMode(boolean selectionMode) {
-        if (selectionMode && itemView.isActivated()) {
-            itemView.setBackgroundColor(Color.GRAY);
-        } else {
-            itemView.setBackgroundColor(Color.WHITE);
-        }
     }
 
     @Override

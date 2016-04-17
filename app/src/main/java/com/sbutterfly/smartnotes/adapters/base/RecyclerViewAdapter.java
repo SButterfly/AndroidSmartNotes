@@ -145,12 +145,8 @@ public abstract class RecyclerViewAdapter<T, H extends RecyclerView.ViewHolder> 
     }
 
     public void clearSelections() {
-        if (selectedCount > 0) {
-            for (Tuple<T, Boolean> tuple : this.items) {
-                tuple.y = false;
-            }
-            selectedCount = 0;
-            notifyDataSetChanged();
+        for (int i = 0; i < items.size(); i++) {
+            clearSelection(i);
         }
     }
 
