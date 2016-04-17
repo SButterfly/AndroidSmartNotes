@@ -114,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
             setEnabledMenuItem(changeMenuItem, adapter.getSelectedItemsCount() == 1);
             setEnabledMenuItem(deleteMenuItem, adapter.getSelectedItemsCount() != 0);
 
+            if (adapter.getSelectedItemsCount() == 0) {
+                exitSelectionMode();
+            }
+
             updateAppBarTitle();
         }
     }
@@ -200,6 +204,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewOnIte
                             for (Note selectedNote : selectedItems) {
                                 notesAccessObject.deleteNote(selectedNote);
                             }
+
+                            exitSelectionMode();
                         }
                     }
                 };
